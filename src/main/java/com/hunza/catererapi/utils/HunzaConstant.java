@@ -4,6 +4,9 @@ public interface HunzaConstant {
     String SUCCESS_STATUS = "API_200";
     String SUCCESS_MESSAGE = "SUCCESS";
 
+    String CREATED_SUCCESS_STATUS = "API_201";
+    String CREATED_SUCCESS_MESSAGE = "CREATED";
+
     String ALREADY_EXIST_STATUS = "API_409";
 
     String ALREADY_EXIST_MESSAGE = "Already Exist";
@@ -26,5 +29,6 @@ public interface HunzaConstant {
 
 
     String DATA_DOES_NOT_EXIST = "Data does not exist";
+    String SUCCESS_DELETE = "Delete success";
 
 }

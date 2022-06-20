@@ -2,8 +2,10 @@ package com.hunza.catererapi.controller;
 
 import com.hunza.catererapi.dto.response.APIResponse;
 import com.hunza.catererapi.model.CatererDocument;
+import com.hunza.catererapi.service.CacheManagerService;
 import com.hunza.catererapi.service.CatererService;
 import com.hunza.catererapi.utils.APIResponseUtil;
+import com.hunza.catererapi.utils.HunzaConstant;
 import com.hunza.catererapi.utils.HunzaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +29,16 @@ public class CatererController {
     @Autowired
     HunzaUtil hunzaUtil;
 
+    @Autowired
+    CacheManagerService cacheManagerService;
+
     @PostMapping("/add")
     public ResponseEntity<APIResponse> addCaterer(@Valid @RequestBody CatererDocument catererDocument){
         logger.info("add new catere request");
         catererDocument.setId(null);
         APIResponse apiResponse = catererService.createCaterer(catererDocument);
+        if(apiResponse.getStatus().equals(HunzaConstant.CREATED_SUCCESS_STATUS))
+            cacheManagerService.evictAllCatererCache();
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
     }
 
@@ -39,6 +46,8 @@ public class CatererController {
     public ResponseEntity<APIResponse> updateCaterer(@RequestBody CatererDocument catererDocument){
         logger.info("update catere request");
         APIResponse apiResponse = catererService.updateCaterer(catererDocument);
+        if(apiResponse.getStatus().equals(HunzaConstant.SUCCESS_STATUS))
+            cacheManagerService.evictAllCatererCache();
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
     }
 
@@ -77,6 +86,13 @@ public class CatererController {
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
     }
 
-
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<APIResponse> deleteCaterer(@PathVariable("id") String id){
+        logger.info("add new catere request");
+        APIResponse apiResponse = catererService.deleteCaterer(id);
+        if(apiResponse.getStatus().equals(HunzaConstant.CREATED_SUCCESS_STATUS))
+            cacheManagerService.evictAllCatererCache();
+        return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
+    }
 
 }

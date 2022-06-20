@@ -9,6 +9,8 @@ import com.hunza.catererapi.utils.HunzaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -34,7 +36,7 @@ public class CatererService {
         APIResponse apiResponse;
         try {
             CatererDocument cc = catererRepository.save(catererDocument);
-            apiResponse = apiResponseUtil.successResponse(cc);
+            apiResponse = apiResponseUtil.createdSuccessResponse(cc);
         } catch (Exception e){
             apiResponse = apiResponseUtil.failResponse(e.getMessage());
             logger.error("create catere error", e);
@@ -61,8 +63,9 @@ public class CatererService {
         }
         return apiResponse;
     }
-
+    @Cacheable("search")
     public APIResponse searchCaterer(Pageable pageable){
+        logger.info("loading data for: {}", pageable);
         APIResponse apiResponse;
         try {
             Page<CatererDocument> page = catererRepository.findAll(pageable);
@@ -74,7 +77,13 @@ public class CatererService {
         return apiResponse;
     }
 
+    @CacheEvict(value="search", allEntries=true)
+    public void searchCatererEvit(){
+        logger.info("evicting search cache");
+    }
+    @Cacheable("nameorid")
     public APIResponse getByNameOrId(Pageable pageable, String nameorid) {
+        logger.info("loading data for: {}, {}", pageable, nameorid);
         APIResponse apiResponse;
         try {
             Page<CatererDocument> page = catererRepository.findByNameOrId(nameorid, nameorid, pageable);
@@ -85,8 +94,13 @@ public class CatererService {
         }
         return apiResponse;
     }
-
+    @CacheEvict(value="nameorid", allEntries=true)
+    public void getByANmeOrIdEvit(){
+        logger.info("evicting name or id cache");
+    }
+    @Cacheable("bycity")
     public APIResponse getByCity(Pageable pageable, String city) {
+        logger.info("loading data for: {}, {}", pageable, city);
         APIResponse apiResponse;
         try {
             Page<CatererDocument> page = catererRepository.findByLocation_City(city, pageable);
@@ -97,4 +111,27 @@ public class CatererService {
         }
         return apiResponse;
     }
+    @CacheEvict(value="bycity", allEntries=true)
+    public void getByCityEvit(){
+        logger.info("evicting by city cache");
+    }
+
+    public APIResponse deleteCaterer(String id) {
+        try {
+            Optional<CatererDocument> ccOps = catererRepository.findById(id);
+            if(ccOps.isPresent()){
+                logger.info("caterer found for: {}", id);
+                catererRepository.delete(ccOps.get());
+                return apiResponseUtil.successResponse(HunzaConstant.SUCCESS_DELETE);
+            } else {
+                logger.warn("caterer not found for: {}", id);
+                return apiResponseUtil.notFound(HunzaConstant.DATA_DOES_NOT_EXIST);
+            }
+
+        } catch (Exception e){
+            logger.error("save catere error", e);
+            return apiResponseUtil.failResponse(e.getMessage());
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.hunza.catererapi.model;
 
 import com.hunza.catererapi.utils.validator.RangeCheck;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -10,8 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Document(collection = "caterer")
-@Getter
-@Setter
+@Data
 public class CatererDocument {
     @Id
     private String id;

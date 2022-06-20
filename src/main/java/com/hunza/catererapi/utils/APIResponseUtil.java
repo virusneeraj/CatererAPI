@@ -17,6 +17,15 @@ public class APIResponseUtil {
         return apiResponse;
     }
 
+    public APIResponse createdSuccessResponse(Object data){
+        APIResponse apiResponse = new APIResponse();
+
+        apiResponse.setStatus(HunzaConstant.CREATED_SUCCESS_STATUS);
+        apiResponse.setMessage(HunzaConstant.CREATED_SUCCESS_MESSAGE);
+        apiResponse.setData(data);
+        return apiResponse;
+    }
+
     public APIResponse errorResponse(Object data){
         APIResponse apiResponse = new APIResponse();
 
@@ -77,6 +86,9 @@ public class APIResponseUtil {
         switch (apiResponse.getStatus()){
             case HunzaConstant.SUCCESS_STATUS:
                 apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.OK);//200
+                break;
+            case HunzaConstant.CREATED_SUCCESS_STATUS:
+                apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.CREATED);//201
                 break;
             case HunzaConstant.ERROR_STATUS:
                 apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);//500
