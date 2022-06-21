@@ -66,7 +66,6 @@ public class CatererController {
     public ResponseEntity<APIResponse> getByCityCaterer(@RequestParam( name = "page", defaultValue = "0", required = false) String page,
                                                             @RequestParam( name = "size", defaultValue = "10", required = false) String size,
                                                             @RequestParam( name = "sort", required = false) String sortWithOrder,
-                                                            @RequestParam( name = "search", required = false) String searchText,
                                                             @PathVariable("byCity") String nameorid){
         logger.info("sea5rch catere request");
         Pageable pageable = hunzaUtil.getPageable(page, size, sortWithOrder);
@@ -75,22 +74,17 @@ public class CatererController {
     }
 
     @GetMapping("/get/{byNameOrId}")
-    public ResponseEntity<APIResponse> getByNameOrIdCaterer(@RequestParam( name = "page", defaultValue = "0", required = false) String page,
-                                                     @RequestParam( name = "size", defaultValue = "10", required = false) String size,
-                                                     @RequestParam( name = "sort", required = false) String sortWithOrder,
-                                                     @RequestParam( name = "search", required = false) String searchText,
-                                                    @PathVariable("byNameOrId") String nameorid){
+    public ResponseEntity<APIResponse> getByNameOrIdCaterer(@PathVariable("byNameOrId") String nameorid){
         logger.info("sea5rch catere request");
-        Pageable pageable = hunzaUtil.getPageable(page, size, sortWithOrder);
-        APIResponse apiResponse = catererService.getByNameOrId(pageable, nameorid);
+        APIResponse apiResponse = catererService.getByNameOrId(nameorid);
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<APIResponse> deleteCaterer(@PathVariable("id") String id){
-        logger.info("add new catere request");
-        APIResponse apiResponse = catererService.deleteCaterer(id);
-        if(apiResponse.getStatus().equals(HunzaConstant.CREATED_SUCCESS_STATUS))
+    @DeleteMapping("/delete/{byNameOrId}")
+    public ResponseEntity<APIResponse> deleteCaterer(@PathVariable("byNameOrId") String byNameOrId){
+        logger.info("delete caterer request");
+        APIResponse apiResponse = catererService.deleteCaterer(byNameOrId);
+        if(apiResponse.getStatus().equals(HunzaConstant.SUCCESS_DELETE))
             cacheManagerService.evictAllCatererCache();
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
     }

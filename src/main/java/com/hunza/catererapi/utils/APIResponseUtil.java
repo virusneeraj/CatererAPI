@@ -93,9 +93,6 @@ public class APIResponseUtil {
             case HunzaConstant.ERROR_STATUS:
                 apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);//500
                 break;
-            case HunzaConstant.ALREADY_EXIST_STATUS:
-                apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);//409
-                break;
             case HunzaConstant.NOT_FOUND_STATUS:
                 apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.NON_AUTHORITATIVE_INFORMATION);//203
                 break;

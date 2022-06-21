@@ -7,7 +7,7 @@ public interface HunzaConstant {
     String CREATED_SUCCESS_STATUS = "API_201";
     String CREATED_SUCCESS_MESSAGE = "CREATED";
 
-    String ALREADY_EXIST_STATUS = "API_409";
+    String ALREADY_EXIST_STATUS = "API_400";
 
     String ALREADY_EXIST_MESSAGE = "Already Exist";
 
