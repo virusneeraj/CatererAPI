@@ -1,7 +1,7 @@
 package com.hunza.catererapi.controller;
 
+import com.hunza.catererapi.dto.request.CatererRequest;
 import com.hunza.catererapi.dto.response.APIResponse;
-import com.hunza.catererapi.model.CatererDocument;
 import com.hunza.catererapi.service.CacheManagerService;
 import com.hunza.catererapi.service.CatererService;
 import com.hunza.catererapi.utils.APIResponseUtil;
@@ -33,19 +33,19 @@ public class CatererController {
     CacheManagerService cacheManagerService;
 
     @PostMapping("/add")
-    public ResponseEntity<APIResponse> addCaterer(@Valid @RequestBody CatererDocument catererDocument){
+    public ResponseEntity<APIResponse> addCaterer(@Valid @RequestBody CatererRequest catererRequest){
         logger.info("add new catere request");
-        catererDocument.setId(null);
-        APIResponse apiResponse = catererService.createCaterer(catererDocument);
+        catererRequest.setId(null);
+        APIResponse apiResponse = catererService.createCaterer(catererRequest);
         if(apiResponse.getStatus().equals(HunzaConstant.CREATED_SUCCESS_STATUS))
             cacheManagerService.evictAllCatererCache();
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<APIResponse> updateCaterer(@RequestBody CatererDocument catererDocument){
+    public ResponseEntity<APIResponse> updateCaterer(@RequestBody CatererRequest catererRequest){
         logger.info("update catere request");
-        APIResponse apiResponse = catererService.updateCaterer(catererDocument);
+        APIResponse apiResponse = catererService.updateCaterer(catererRequest);
         if(apiResponse.getStatus().equals(HunzaConstant.SUCCESS_STATUS))
             cacheManagerService.evictAllCatererCache();
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);

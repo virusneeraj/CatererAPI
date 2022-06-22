@@ -25,7 +25,6 @@ public class CatererDocument extends RepresentationModel<CatererDocument> {
     private String id;
     @Indexed(unique = true)
     private String name;
-    @Valid
     private Location location;
     @NotNull(message = "Capacity is required")
     @Valid

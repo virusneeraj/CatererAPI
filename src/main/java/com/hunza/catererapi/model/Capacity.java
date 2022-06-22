@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-@RangeCheck(message = "Minimum and Maximum are required. Minimum and Maximum should positive number. Maximum can not smaller then minimum")
 public class Capacity {
     private Integer minimum;
     private Integer maximum;

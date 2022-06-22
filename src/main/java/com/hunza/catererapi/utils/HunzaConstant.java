@@ -31,4 +31,6 @@ public interface HunzaConstant {
     String DATA_DOES_NOT_EXIST = "Data does not exist";
     String SUCCESS_DELETE = "Delete success";
 
+    String BAD_REQUEST_MISSING_ID = "Id is missing";
+
 }

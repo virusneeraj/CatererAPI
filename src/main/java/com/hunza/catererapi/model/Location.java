@@ -15,9 +15,7 @@ import java.util.List;
 
 @Data
 public class Location extends RepresentationModel<Location> {
-    @Pattern(regexp="^[A-Za-z]*$",message = "City must not contain digits or special characters")
     private String city;
-    @NotNull
     private String street;
     private String postalCode;
 

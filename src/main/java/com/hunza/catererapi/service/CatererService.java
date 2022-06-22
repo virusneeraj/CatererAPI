@@ -1,6 +1,7 @@
 package com.hunza.catererapi.service;
 
 import com.hunza.catererapi.controller.CatererController;
+import com.hunza.catererapi.dto.request.CatererRequest;
 import com.hunza.catererapi.dto.response.APIResponse;
 import com.hunza.catererapi.model.CatererDocument;
 import com.hunza.catererapi.repository.CatererRepository;
@@ -9,6 +10,7 @@ import com.hunza.catererapi.utils.HunzaConstant;
 import com.hunza.catererapi.utils.HunzaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,14 +35,15 @@ public class CatererService {
     HunzaUtil hunzaUtil;
 
 
-    public APIResponse createCaterer(CatererDocument catererDocument){
+    public APIResponse createCaterer(CatererRequest catererRequest){
         APIResponse apiResponse;
         try {
-            Optional<CatererDocument> document = catererRepository.findFirstByName(catererDocument.getName());
+            Optional<CatererDocument> document = catererRepository.findFirstByName(catererRequest.getName());
             if(document.isPresent()){
                logger.info("Already exist with same name");
-                apiResponse = apiResponseUtil.alreadyExist(catererDocument.getName());
+                apiResponse = apiResponseUtil.alreadyExist(catererRequest.getName());
             } else {
+                CatererDocument catererDocument = convertIntoEntity(catererRequest);
                 CatererDocument cc = catererRepository.save(catererDocument);
                 apiResponse = apiResponseUtil.createdSuccessResponse(cc);
             }
@@ -52,16 +55,21 @@ public class CatererService {
         return apiResponse;
     }
 
-    public APIResponse updateCaterer(CatererDocument catererDocument){
+    public APIResponse updateCaterer(CatererRequest catererRequest){
         APIResponse apiResponse;
         try {
-            Optional<CatererDocument> ccOps = catererRepository.findById(catererDocument.getId());
+            if(catererRequest.getId() == null || catererRequest.getId().isEmpty()){
+                logger.warn("caterer id is missing: {}", catererRequest.getId());
+                return apiResponseUtil.badRequest(HunzaConstant.BAD_REQUEST_MISSING_ID);
+            }
+            Optional<CatererDocument> ccOps = catererRepository.findById(catererRequest.getId());
             if(ccOps.isPresent()){
-                logger.info("caterer found for: {}", catererDocument.getId());
+                logger.info("caterer found for: {}", catererRequest.getId());
+                CatererDocument catererDocument = convertIntoEntity(catererRequest);
                 CatererDocument cc = catererRepository.save(catererDocument);
                 apiResponse = apiResponseUtil.successResponse(cc);
             } else {
-                logger.warn("caterer not found for: {}", catererDocument.getId());
+                logger.warn("caterer not found for: {}", catererRequest.getId());
                 apiResponse = apiResponseUtil.notFound(HunzaConstant.DATA_DOES_NOT_EXIST);
             }
 
@@ -165,6 +173,12 @@ public class CatererService {
         document.add(linkTo(methodOn(CatererController.class).getByNameOrIdCaterer(document.getId())).withSelfRel());
         document.getLocation().add(linkTo(methodOn(CatererController.class).getByCityCaterer("0","10","name",document.getLocation().getCity())).withSelfRel());
 
+    }
+
+    private CatererDocument convertIntoEntity(CatererRequest catererRequest){
+        CatererDocument catererDocument = new CatererDocument();
+        BeanUtils.copyProperties(catererRequest, catererDocument);
+        return catererDocument;
     }
 
 }
