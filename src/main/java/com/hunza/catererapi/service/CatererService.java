@@ -1,5 +1,7 @@
 package com.hunza.catererapi.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hunza.catererapi.controller.CatererController;
 import com.hunza.catererapi.dto.request.CatererRequest;
 import com.hunza.catererapi.dto.response.APIResponse;
@@ -44,6 +46,7 @@ public class CatererService {
                 apiResponse = apiResponseUtil.alreadyExist(catererRequest.getName());
             } else {
                 CatererDocument catererDocument = convertIntoEntity(catererRequest);
+                logger.info("catererDocument: {}", catererDocument);
                 CatererDocument cc = catererRepository.save(catererDocument);
                 apiResponse = apiResponseUtil.createdSuccessResponse(cc);
             }
@@ -159,25 +162,30 @@ public class CatererService {
         }
     }
 
-    private void addSelfLinks(Page<CatererDocument> page){
+    private void addSelfLinks(Page<CatererDocument> page) throws Exception{
         page.getContent()
                 .forEach(doc -> {
                             doc.add(linkTo(methodOn(CatererController.class).getByNameOrIdCaterer(doc.getId())).withSelfRel());
-                            doc.getLocation().add(linkTo(methodOn(CatererController.class).getByCityCaterer("0","10","name",doc.getLocation().getCity())).withSelfRel());
+                            if(doc.getLocation() != null)
+                                doc.getLocation().add(linkTo(methodOn(CatererController.class).getByCityCaterer("0","10","name",doc.getLocation().getCity())).withSelfRel());
                         }
                 );
     }
 
-    private void addSelfLinks(CatererDocument document){
+    private void addSelfLinks(CatererDocument document) throws Exception{
 
         document.add(linkTo(methodOn(CatererController.class).getByNameOrIdCaterer(document.getId())).withSelfRel());
-        document.getLocation().add(linkTo(methodOn(CatererController.class).getByCityCaterer("0","10","name",document.getLocation().getCity())).withSelfRel());
+        if(document.getLocation() != null)
+            document.getLocation().add(linkTo(methodOn(CatererController.class).getByCityCaterer("0","10","name",document.getLocation().getCity())).withSelfRel());
 
     }
 
     private CatererDocument convertIntoEntity(CatererRequest catererRequest){
         CatererDocument catererDocument = new CatererDocument();
-        BeanUtils.copyProperties(catererRequest, catererDocument);
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        catererDocument = mapper.convertValue(catererRequest, CatererDocument.class);
+
+        // BeanUtils.copyProperties(catererRequest, catererDocument);
         return catererDocument;
     }
 
