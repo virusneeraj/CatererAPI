@@ -44,7 +44,9 @@ public class CatererService {
             Optional<CatererDocument> document = catererRepository.findFirstByName(catererRequest.getName());
             if(document.isPresent()){
                logger.info("Already exist with same name");
-                apiResponse = apiResponseUtil.alreadyExist(new ArrayList<String>().add(catererRequest.getName()+" "+HunzaConstant.ALREADY_EXIST_MESSAGE));
+               ArrayList eList = new ArrayList<String>(1);
+               eList.add(catererRequest.getName()+" "+HunzaConstant.ALREADY_EXIST_MESSAGE);
+                apiResponse = apiResponseUtil.alreadyExist(eList);
             } else {
                 CatererDocument catererDocument = convertIntoEntity(catererRequest);
                 logger.info("catererDocument: {}", catererDocument);
