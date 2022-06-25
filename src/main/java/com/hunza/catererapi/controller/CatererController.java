@@ -58,7 +58,7 @@ public class CatererController {
                                                      @RequestParam( name = "search", required = false) String searchText){
         logger.info("sea5rch catere request");
         Pageable pageable = hunzaUtil.getPageable(page, size, sortWithOrder);
-        APIResponse apiResponse = catererService.searchCaterer(pageable);
+        APIResponse apiResponse = catererService.searchCaterer(pageable, searchText);
         return apiResponseUtil.apiResponseToEntityResponse(apiResponse);
     }
 

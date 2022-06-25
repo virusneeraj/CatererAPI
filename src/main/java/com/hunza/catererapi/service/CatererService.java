@@ -86,11 +86,17 @@ public class CatererService {
         return apiResponse;
     }
     @Cacheable("search")
-    public APIResponse searchCaterer(Pageable pageable){
+    public APIResponse searchCaterer(Pageable pageable, String searchCity){
         logger.info("loading data for: {}", pageable);
         APIResponse apiResponse;
         try {
-            Page<CatererDocument> page = catererRepository.findAll(pageable);
+            Page<CatererDocument> page = null;
+            if(searchCity != null && searchCity.length() > 3){
+                page = catererRepository.findByLocation_City(searchCity, pageable);
+            } else {
+                page = catererRepository.findAll(pageable);
+            }
+
             addSelfLinks(page);
             apiResponse = apiResponseUtil.successResponse(page);
         } catch (Exception e){

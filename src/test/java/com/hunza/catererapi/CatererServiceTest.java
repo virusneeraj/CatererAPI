@@ -33,8 +33,8 @@ public class CatererServiceTest {
         String sortWithOrder = "";
         Pageable pageable = hunzaUtil.getPageable(""+page,""+size,""+sortWithOrder);
 
-        when(catererService.searchCaterer(pageable)).thenReturn(apiResponseUtil.successResponse(HunzaConstant.SUCCESS_MESSAGE));
+        when(catererService.searchCaterer(pageable, "")).thenReturn(apiResponseUtil.successResponse(HunzaConstant.SUCCESS_MESSAGE));
 
-       assertThat(catererService.searchCaterer(pageable)).isEqualTo(apiResponseUtil.successResponse(HunzaConstant.SUCCESS_MESSAGE));
+       assertThat(catererService.searchCaterer(pageable, "")).isEqualTo(apiResponseUtil.successResponse(HunzaConstant.SUCCESS_MESSAGE));
     }
 }
