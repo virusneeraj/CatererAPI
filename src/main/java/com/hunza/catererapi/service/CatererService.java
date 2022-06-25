@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -43,7 +44,7 @@ public class CatererService {
             Optional<CatererDocument> document = catererRepository.findFirstByName(catererRequest.getName());
             if(document.isPresent()){
                logger.info("Already exist with same name");
-                apiResponse = apiResponseUtil.alreadyExist(catererRequest.getName());
+                apiResponse = apiResponseUtil.alreadyExist(new ArrayList<String>().add(catererRequest.getName()+" "+HunzaConstant.ALREADY_EXIST_MESSAGE));
             } else {
                 CatererDocument catererDocument = convertIntoEntity(catererRequest);
                 logger.info("catererDocument: {}", catererDocument);
