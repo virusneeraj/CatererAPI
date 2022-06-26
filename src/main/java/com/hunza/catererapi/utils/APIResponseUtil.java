@@ -94,7 +94,7 @@ public class APIResponseUtil {
                 apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);//500
                 break;
             case HunzaConstant.NOT_FOUND_STATUS:
-                apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.NON_AUTHORITATIVE_INFORMATION);//203
+                apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);//404
                 break;
             case HunzaConstant.BAD_REQUEST_STATUS:
                 apiResponseResponseEntity =  new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);//400
